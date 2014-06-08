@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import x40241.brent.westmoreland.a4.StockRemoteService.Stub;
 import x40241.brent.westmoreland.a4.db.StockDatabaseHelper;
 import x40241.brent.westmoreland.a4.db.StockDatabaseHelper.StockCursor;
 import x40241.brent.westmoreland.a4.model.PriceData;
@@ -26,7 +27,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
+import android.os.RemoteException;
 import android.util.Log;
 
 /**
@@ -40,7 +41,7 @@ public class StockServiceImpl
     private static final String LOGTAG = "StockServiceImpl";
     private static final boolean DEBUG = true;
     
-    public static final String STOCK_SERVICE_INTENT = "x40241.brent.westmoreland.a2.STOCK_SERVICE";
+    public static final String STOCK_SERVICE_INTENT = "x40241.brent.westmoreland.a4.STOCK_REMOTE_SERVICE";
     public static final String STOCK_DATA_AVAILABLE = "NEW DATA";
     public static final String STOCK_SERVICE_URL = "http://wonkware01.appspot.com/stocks.do";
     
@@ -79,6 +80,23 @@ public class StockServiceImpl
         return list;
     }
     
+    private final StockRemoteService.Stub mLocalBinder=new Stub() {
+    	
+    	@Override
+    	public String getSymbol(String index) throws RemoteException {
+    		return "AAPL";
+    	}
+
+		@Override
+		public List<StockSummary> getStockData() throws RemoteException {
+			return getStockSummary();
+		}
+		
+		public List<StockSummary> getWidgetData() throws RemoteException {
+			return getStockSummary();
+		};
+    };
+    
     /**
      * Database Support
      */
@@ -103,8 +121,8 @@ public class StockServiceImpl
 	            stockSummary.setMax(Math.max(stockSummary.getMax(), price));
 	            stockSummary.setAvg(((stockSummary.getAvg()*count)+price)/(count+1));
 	            stockSummary.setModified(stockInfo.getSequence());  // I have extra field to track modified time
-	            if (update(stockSummary) == 1)  // should be 1 for 1 record updated
-	            	Log.d(LOGTAG, "update succeeded");
+	            if (update(stockSummary) != 1)  // should be 1 for 1 record updated
+	            	Log.d(LOGTAG, "update failed");
 	        }
 	    
 	        final PriceData priceData = new PriceData();
@@ -180,10 +198,9 @@ public class StockServiceImpl
 		public void run() {
 		    List<StockInfo> list = getStockData();
 		    update(list);
-			Log.d("sender", "Broadcasting message");
 			Intent intent = new Intent(STOCK_SERVICE_INTENT);
 			intent.putExtra(STOCK_SERVICE_INTENT, STOCK_DATA_AVAILABLE);
-			LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+			sendBroadcast(intent);
 		}
     }
     
@@ -194,9 +211,6 @@ public class StockServiceImpl
     
     // Track if a client Activity is bound to us.
     private boolean isBound = false;
-    
-    // This is the object that receives interactions from clients.
-    private final IBinder localBinder = new LocalBinder();
     
       
     /**
@@ -242,7 +256,6 @@ public class StockServiceImpl
         if (isInitialized)
             return START_STICKY;
         initialize();
-        
         Log.d (LOGTAG, "*** onStart(): ENDING");
         // We want this service to continue running until it is explicitly stopped.
         return START_STICKY;
@@ -273,7 +286,7 @@ public class StockServiceImpl
             Log.d (LOGTAG, "*** onBind(): toString="+intent.toString());
         }
         isBound = true;
-        return localBinder;
+        return mLocalBinder;
     }
 
     @Override

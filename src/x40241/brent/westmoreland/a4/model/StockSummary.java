@@ -1,10 +1,13 @@
 package x40241.brent.westmoreland.a4.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 
 /**
  * @author Jeffrey Peacock (Jeffrey.Peacock@uci.edu)
  */
-public final class StockSummary
+public final class StockSummary implements Parcelable
 {
 	private long mId;
 	private long   mSequence;
@@ -17,7 +20,29 @@ public final class StockSummary
     private long mCount;
     private long mModified;
     
-    public long getId() {
+    public StockSummary(Parcel source) {    	
+    	mId = source.readLong();
+    	mSequence = source.readLong();
+    	mName = source.readString();
+    	mSymbol = source.readString();
+    	mPrice = source.readFloat();
+    	mMax = source.readFloat();
+    	mMin = source.readFloat();
+    	mAvg = source.readFloat();
+    	mCount = source.readLong();
+    	mModified = source.readLong();
+	}
+
+	public StockSummary() {
+		//
+	}
+	
+	public StockSummary(String symbol, Float price) {
+		mSymbol = symbol;
+		mPrice = price;
+	}
+
+	public long getId() {
 		return mId;
 	}
     
@@ -89,6 +114,39 @@ public final class StockSummary
 	public void setModified(long modified) {
 		mModified = modified;
 	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeLong(mId);
+		dest.writeLong(mSequence);
+		dest.writeString(mName);
+		dest.writeString(mSymbol);
+		dest.writeFloat(mPrice);
+		dest.writeFloat(mMax);
+		dest.writeFloat(mMin);
+		dest.writeFloat(mAvg);
+		dest.writeLong(mCount);
+		dest.writeLong(mModified);
+	}
+	
+	public static final Parcelable.Creator<StockSummary> CREATOR = new Parcelable.Creator<StockSummary>() {
+
+		@Override
+		public StockSummary createFromParcel(Parcel source) {
+			return new StockSummary(source);
+		}
+
+		@Override
+		public StockSummary[] newArray(int size) {
+			return new StockSummary[size];
+		}
+		
+	};
 }
 
 

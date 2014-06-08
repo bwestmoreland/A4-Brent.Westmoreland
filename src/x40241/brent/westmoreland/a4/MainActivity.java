@@ -5,7 +5,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import x40241.brent.westmoreland.a4.StockServiceImpl.LocalBinder;
 import x40241.brent.westmoreland.a4.model.StockSummary;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -16,7 +15,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
+import android.os.RemoteException;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -52,7 +51,7 @@ public class MainActivity extends Activity
 	private BroadcastReceiver mStockDataReceiver;
 	private List<StockSummary> mStockList;
 	private boolean isBound = false;
-	private StockServiceImpl mService;
+	private StockRemoteService mService;
 	private TextView mDetailSymbolTextView;
 	private TextView mDetailNameTextView;
 	private TextView mDetailPriceTextView;
@@ -89,7 +88,6 @@ public class MainActivity extends Activity
 	
 	@Override
 	protected void onDestroy() {
-		stopService(getServiceIntent());
 		super.onDestroy();
 	}
 
@@ -102,16 +100,17 @@ public class MainActivity extends Activity
 	@Override
 	protected void onStart() {
 		super.onStart();
-		LocalBroadcastManager
-			.getInstance(getApplicationContext())
-			.registerReceiver(getStockDataReceiver(),new IntentFilter(StockServiceImpl.STOCK_SERVICE_INTENT));
-		bindService(getServiceIntent(), mServiceConnection, Context.BIND_AUTO_CREATE);
+		registerReceiver(getStockDataReceiver(),new IntentFilter(StockServiceImpl.STOCK_SERVICE_INTENT));
+		if (!isBound){
+			bindService(getServiceIntent(), mServiceConnection, Context.BIND_AUTO_CREATE);
+			isBound = true;
+		}
 	}
 	
 	@Override
 	protected void onStop() {
 		super.onStop();
-		LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(getStockDataReceiver());
+		unregisterReceiver(getStockDataReceiver());
 		if (isBound) {
 			unbindService(mServiceConnection);
 			isBound = false;
@@ -174,7 +173,7 @@ public class MainActivity extends Activity
 	
 	protected Intent getServiceIntent() {
 		if (mServiceIntent == null) {
-			mServiceIntent = new Intent(this, StockServiceImpl.class);
+			mServiceIntent = new Intent(StockServiceImpl.STOCK_SERVICE_INTENT);
 		}
 		return mServiceIntent;
 	}
@@ -184,9 +183,13 @@ public class MainActivity extends Activity
 			mStockDataReceiver = new BroadcastReceiver() {
 				@Override
 				public void onReceive(Context context, Intent intent) {
-					Log.d(LOGTAG, "Received message");
-					if(intent.getSerializableExtra(StockServiceImpl.STOCK_SERVICE_INTENT) == StockServiceImpl.STOCK_DATA_AVAILABLE) {
-						mStockList = mService.getStockSummary();
+					Log.d(LOGTAG, "Received message " + intent.getSerializableExtra(StockServiceImpl.STOCK_SERVICE_INTENT));
+					if(intent.getSerializableExtra(StockServiceImpl.STOCK_SERVICE_INTENT).equals(StockServiceImpl.STOCK_DATA_AVAILABLE)) {
+						try {
+							mStockList = mService.getStockData();
+						} catch (RemoteException e) {
+							e.printStackTrace();
+						}
 					}
 					getListAdapter().setList(mStockList);
 					getListAdapter().notifyDataSetChanged();
@@ -271,8 +274,7 @@ public class MainActivity extends Activity
 		
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			LocalBinder binder = (LocalBinder)service;
-			mService = binder.getService();
+			mService = StockRemoteService.Stub.asInterface(service);
 			isBound = true;
 		}
 		

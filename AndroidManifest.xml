@@ -1,36 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="x40241.brent.westmoreland.a4"
-    android:versionCode="1"
-    android:versionName="1.0" >
+	package="x40241.brent.westmoreland.a4" 
+	android:versionCode="1"
+	android:versionName="1.0">
 
-    <uses-sdk
-        android:minSdkVersion="16"
-        android:targetSdkVersion="19" />
-    
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-sdk 
+	    android:minSdkVersion="16" 
+	    android:targetSdkVersion="19" />
 
-    <application
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
-        <service android:name=".StockServiceImpl" />
-        <activity
-            android:name="x40241.brent.westmoreland.a4.MainActivity"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+	<!-- handle HTC devices -->
+	<uses-permission android:name="android.permission.QUICKBOOT_POWERON" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+	<application 
+	    android:allowBackup="true" 
+	    android:icon="@drawable/ic_launcher"
+		android:label="@string/app_name" 
+		android:theme="@style/AppTheme">
+		<service 
+		    android:name=".StockServiceImpl"
+		    android:process=":remote"
+		    android:exported="false">
+			<intent-filter>
+				<action android:name="x40241.brent.westmoreland.a4.STOCK_REMOTE_SERVICE" />
+			</intent-filter>
+		</service>
+		<receiver android:name="x40241.brent.westmoreland.a4.StockStart">
+			<intent-filter>
+				<action android:name="android.intent.action.BOOT_COMPLETED" />
+				<!-- handle HTC devices -->
+				<action android:name="android.intent.action.QUICKBOOT_POWERON" />
+			</intent-filter>
+		</receiver>
+		        <receiver android:name="StockWidgetProvider" >
+            <intent-filter >
+                <action 
+                    android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".SearchActivity"
-            android:label="@string/app_name" 
-            android:parentActivityName=".MainActivity" >
-        </activity>
-    </application>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/stock_widget_provider" />
+        </receiver>
+		<activity 
+		    android:name="x40241.brent.westmoreland.a4.MainActivity"
+			android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		<activity 
+		    android:name=".SearchActivity" 
+		    android:label="@string/app_name"
+			android:parentActivityName=".MainActivity" />
+
+	</application>
 
 </manifest>

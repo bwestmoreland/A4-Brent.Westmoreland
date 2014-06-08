@@ -38,7 +38,7 @@ public final class StockDataSAX
 	extends DefaultHandler
 {
     private static final String LOGTAG = "StockInfoSAX";
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     
     private static final String DOC_START_END_ELEMENT   = "Stocks";
     private static final String DATA_START_END_ELEMENT  = "stock";
