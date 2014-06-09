@@ -27,6 +27,7 @@
 				<action android:name="x40241.brent.westmoreland.a4.STOCK_REMOTE_SERVICE" />
 			</intent-filter>
 		</service>
+		<service android:name=".StockWidgetUpdateService"></service>
 		<receiver android:name="x40241.brent.westmoreland.a4.StockStart">
 			<intent-filter>
 				<action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -34,10 +35,9 @@
 				<action android:name="android.intent.action.QUICKBOOT_POWERON" />
 			</intent-filter>
 		</receiver>
-		        <receiver android:name="StockWidgetProvider" >
+		<receiver android:name="StockWidgetProvider" >
             <intent-filter >
-                <action 
-                    android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"

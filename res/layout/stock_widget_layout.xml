@@ -17,18 +17,27 @@
 		    style="@android:style/TextAppearance.Medium"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_gravity="center" 
+			android:gravity="center" 
 			android:layout_margin="4dip" 
 			android:text="@string/label_symbol" />
+		
+		<TextView 
+		    android:id="@+id/avg1Update" 
+		    style="@android:style/TextAppearance.Medium"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center" 
+			android:layout_margin="4dip" 
+			android:text="@string/label_avg" />
 
 		<TextView 
 		    android:id="@+id/price1Update" 
 		    style="@android:style/TextAppearance.Medium"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_gravity="center" 
+			android:gravity="center" 
 			android:layout_margin="4dip" 
-			android:text="@string/label_symbol" />
+			android:text="@string/label_price" />
 	</LinearLayout>
 	
 	<LinearLayout 
@@ -41,18 +50,27 @@
 		    style="@android:style/TextAppearance.Medium"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_gravity="center" 
+			android:gravity="center" 
 			android:layout_margin="4dip" 
 			android:text="@string/label_symbol" />
+		
+		<TextView 
+		    android:id="@+id/avg2Update" 
+		    style="@android:style/TextAppearance.Medium"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center" 
+			android:layout_margin="4dip" 
+			android:text="@string/label_avg" />
 
 		<TextView 
 		    android:id="@+id/price2Update" 
 		    style="@android:style/TextAppearance.Medium"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_gravity="center" 
+			android:gravity="center" 
 			android:layout_margin="4dip" 
-			android:text="@string/label_symbol" />
+			android:text="@string/label_price" />
 	</LinearLayout>
 	
 	<LinearLayout 
@@ -65,17 +83,26 @@
 		    style="@android:style/TextAppearance.Medium"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_gravity="center" 
+			android:gravity="center" 
 			android:layout_margin="4dip" 
 			android:text="@string/label_symbol" />
+		
+		<TextView 
+		    android:id="@+id/avg3Update" 
+		    style="@android:style/TextAppearance.Medium"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center" 
+			android:layout_margin="4dip" 
+			android:text="@string/label_avg" />
 
 		<TextView 
 		    android:id="@+id/price3Update" 
 		    style="@android:style/TextAppearance.Medium"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_gravity="center" 
+			android:gravity="center" 
 			android:layout_margin="4dip" 
-			android:text="@string/label_symbol" />
+			android:text="@string/label_price" />
 	</LinearLayout>
 </LinearLayout>

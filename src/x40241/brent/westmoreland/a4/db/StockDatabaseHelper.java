@@ -133,6 +133,16 @@ public class StockDatabaseHelper extends SQLiteOpenHelper {
 		return new StockCursor(wrapped);
 	}
 	
+	public StockCursor queryStockHighestAvg(){
+		Cursor wrapped = getReadableDatabase().rawQuery("SELECT " + TABLE_STOCK + ".*, " + TABLE_PRICE + "." + COLUMN_PRICE_PRICE 
+				+ " FROM " + TABLE_STOCK
+				+ " INNER JOIN " + TABLE_PRICE
+				+ " ON " + TABLE_STOCK + "." + COLUMN_STOCK_ID + "=" + TABLE_PRICE + "." + COLUMN_PRICE_STOCK_ID 
+				+ " ORDER BY " + TABLE_STOCK + "." + COLUMN_STOCK_AVG + " DESC"
+				+ " LIMIT 3", null);
+		return new StockCursor(wrapped);
+	}
+	
 	
 	
 	public static class StockCursor extends CursorWrapper {

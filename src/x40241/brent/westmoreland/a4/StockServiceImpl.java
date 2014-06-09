@@ -81,20 +81,11 @@ public class StockServiceImpl
     }
     
     private final StockRemoteService.Stub mLocalBinder=new Stub() {
-    	
-    	@Override
-    	public String getSymbol(String index) throws RemoteException {
-    		return "AAPL";
-    	}
 
 		@Override
 		public List<StockSummary> getStockData() throws RemoteException {
 			return getStockSummary();
 		}
-		
-		public List<StockSummary> getWidgetData() throws RemoteException {
-			return getStockSummary();
-		};
     };
     
     /**
